@@ -1,43 +1,28 @@
 #Use as Administrator. Tools for create and deploy ERA VM in Hyper-V
+# usage example : ./deploy.ps1 config.psd1
 
 #Define the server name
-#####################################################$VMName="VM_ESET_V7"
 function CreateSwitches () {
-#create switches (comment if not needed)
+#create switches (comment line 8 to 10 if not needed)
 #parameters can be modify in createswitches.ps1
-#Powershell.exe -executionpolicy remotesigned -File  "C:\VMs\ESET\createswitches.ps1"
 
+#Powershell.exe -executionpolicy remotesigned -File  "C:\VMs\ESET\createswitches.ps1"
 #Write-Host "Waiting for Virtual switches loading"
 #Start-Sleep 30
 }
 
-
 function ConfVm () {
 $configfile = $args[0]
-
-    #Starting Memory
-####################################################    $StartingMemory=4GB
-
-    #Set the base folder, on production servers, this will be something like D:\VMS\
-#####################################################    $BaseFolderPath="C:\VMs\"
-
-    #Set variables
-##############################################    $VMFolderPath=$BaseFolderPath + $VMNAME + "\"
-
-##############################################    $VHD = "C:\VMs\ESET\ESMC_Appliance.vhd"
-
 
     #Create a new folder
     $VMFolderPath= $config.BaseFolderPath + $config.VMNAME + "\"
     
     try{
-
        New-Item $VMFolderPath -ItemType directory -ErrorAction STOP
     }
     catch {
     Write-Host $_   
     }
-
 }
 
 function CreateVm () {
@@ -51,14 +36,10 @@ $configfile = $args[0]
 
     #Create a new VM, and attach the VHD
     New-VM -Name $config.VMName -MemoryStartupBytes $config.StartingMemory -VHDPath $config.VHD
-    
-
-    
     Start-Sleep 5
 
     #Add Network
     ADD-VMNetworkAdapter –VMName $config.VMName –Switchname $vmSwitch
-
 }
 
 function StartVm () {
